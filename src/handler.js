@@ -1,8 +1,8 @@
 const { nanoid } = require('nanoid');
 const books = require('./books');
 
-const createBookHandler = (req, h) => {
-  const data = req.payload;
+const createBookHandler = (request, h) => {
+  const data = request.payload;
 
   const {
     name, year, author, summary, publisher, pageCount, readPage, reading,
@@ -70,50 +70,50 @@ const createBookHandler = (req, h) => {
   return response;
 };
 
-const getAllBooksHandler = (req, h) => {
-  const { name, reading, finished } = req.query;
+const getAllBooksHandler = (request, h) => {
+  const { name, reading, finished } = request.query;
 
   if (name !== undefined) {
-    const data = books.filter((book) => book.name.toLowerCase()
-      .includes(name.toLowerCase())
-      .map((b) => ({
-        id: b.id,
-        name: b.name,
-        publisher: b.publisher,
-      })));
+    // eslint-disable-next-line max-len
+    const data = books.filter((book) => book.name.toLowerCase().includes(name.toLowerCase())).map((book) => ({
+      id: book.id,
+      name: book.name,
+      publisher: book.publisher,
+    }));
+
     const response = h.response({
       status: 'success',
-      data: { data },
+      data: { books: data },
     });
     response.code(200);
     return response;
   }
 
   if (reading === '1') {
-    const data = books.filter((book) => book.reading === true)
-      .map((b) => ({
-        id: b.id,
-        name: b.name,
-        publisher: b.publisher,
-      }));
+    const data = books.filter((book) => book.reading === true).map((book) => ({
+      id: book.id,
+      name: book.name,
+      publisher: book.publisher,
+    }));
+
     const response = h.response({
       status: 'success',
-      data: { data },
+      data: { books: data },
     });
     response.code(200);
     return response;
   }
 
   if (finished === '1') {
-    const data = books.filter((book) => book.finished === true)
-      .map((b) => ({
-        id: b.id,
-        name: b.name,
-        publisher: b.publisher,
-      }));
+    const data = books.filter((book) => book.finished === true).map((book) => ({
+      id: book.id,
+      name: book.name,
+      publisher: book.publisher,
+    }));
+
     const response = h.response({
       status: 'success',
-      data: { data },
+      data: { books: data },
     });
     response.code(200);
     return response;
@@ -127,26 +127,22 @@ const getAllBooksHandler = (req, h) => {
 
   const response = h.response({
     status: 'success',
-    data: {
-      books: data,
-    },
+    data: { books: data },
   });
   response.code(200);
   return response;
 };
 
-const getBookHandler = (req, h) => {
-  const data = req.params;
+const getBookHandler = (request, h) => {
+  const { id } = request.params;
 
-  const index = books.findIndex((book) => book.id === data.id);
-  const detail = books[index];
+  // eslint-disable-next-line no-shadow
+  const book = books.find((book) => book.id === id);
 
-  if (index !== -1) {
+  if (book) {
     const response = h.response({
       status: 'success',
-      data: {
-        book: detail,
-      },
+      data: { book },
     });
     response.code(200);
     return response;
@@ -160,14 +156,14 @@ const getBookHandler = (req, h) => {
   return response;
 };
 
-const editBookByIdHandler = (req, h) => {
-  const param = req.params;
-  const data = req.payload;
+const editBookByIdHandler = (request, h) => {
+  const { id } = request.params;
+  const data = request.payload;
   const {
     name, year, author, summary, publisher, pageCount, readPage, reading,
   } = data;
   const updatedAt = new Date().toISOString();
-  const index = books.findIndex((book) => book.id === param.id);
+  const index = books.findIndex((book) => book.id === id);
 
   if (!name) {
     const response = h.response({
@@ -220,16 +216,16 @@ const editBookByIdHandler = (req, h) => {
 
   const response = h.response({
     status: 'fail',
-    message: 'Buku gagal ditambahkan',
+    message: 'Buku gagal diperbarui',
   });
   response.code(500);
   return response;
 };
 
-const deleteBookByIdHandler = (req, h) => {
-  const data = req.params;
+const deleteBookByIdHandler = (request, h) => {
+  const { id } = request.params;
 
-  const index = books.findIndex((book) => book.id === data.id);
+  const index = books.findIndex((book) => book.id === id);
 
   if (index !== -1) {
     books.splice(index, 1);
