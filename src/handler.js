@@ -1,11 +1,18 @@
 const { nanoid } = require('nanoid');
 const books = require('./books');
 
-const createBookHandler = (request, h) => {
+const createBook = (request, h) => {
   const data = request.payload;
 
   const {
-    name, year, author, summary, publisher, pageCount, readPage, reading,
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading,
   } = data;
 
   if (!name) {
@@ -70,7 +77,7 @@ const createBookHandler = (request, h) => {
   return response;
 };
 
-const getAllBooksHandler = (request, h) => {
+const getAllBooks = (request, h) => {
   const { name, reading, finished } = request.query;
 
   if (name !== undefined) {
@@ -133,7 +140,7 @@ const getAllBooksHandler = (request, h) => {
   return response;
 };
 
-const getBookHandler = (request, h) => {
+const getBook = (request, h) => {
   const { id } = request.params;
 
   // eslint-disable-next-line no-shadow
@@ -156,7 +163,7 @@ const getBookHandler = (request, h) => {
   return response;
 };
 
-const editBookByIdHandler = (request, h) => {
+const editBookById = (request, h) => {
   const { id } = request.params;
   const data = request.payload;
   const {
@@ -222,7 +229,7 @@ const editBookByIdHandler = (request, h) => {
   return response;
 };
 
-const deleteBookByIdHandler = (request, h) => {
+const deleteBookById = (request, h) => {
   const { id } = request.params;
 
   const index = books.findIndex((book) => book.id === id);
@@ -246,9 +253,9 @@ const deleteBookByIdHandler = (request, h) => {
 };
 
 module.exports = {
-  createBookHandler,
-  getAllBooksHandler,
-  getBookHandler,
-  editBookByIdHandler,
-  deleteBookByIdHandler,
+  createBook,
+  getAllBooks,
+  getBook,
+  editBookById,
+  deleteBookById,
 };
